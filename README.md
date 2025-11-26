@@ -45,6 +45,62 @@ Jujube.js 是一个 TypeScript 库，旨在提供一套简洁、强大的 API �
     npm test
     ```
 
+## 示例
+
+### AI友好的HTML内容提取
+
+项目提供了一个完整的示例，展示如何从任意网站提取AI友好的结构化内容：
+
+```bash
+npm test examples/ai-friendly-extraction.spec.ts
+```
+
+此示例将：
+- 访问目标网站并提取所有可交互元素
+- 获取每个元素的详细信息：
+  - 元素ID、标签名、文本内容
+  - 精确的位置坐标和尺寸（bounding box）
+  - 中心点坐标（方便AI进行点击操作）
+  - 相关属性（href、type、placeholder等）
+- 将数据保存为结构化的JSON格式（`examples/ai-friendly-content.json`）
+- 按类型分类元素（链接、按钮、输入框等）
+- 生成可视化截图，显示所有元素的边界框
+
+**输出示例：**
+
+```json
+{
+  "url": "https://www.wikipedia.org",
+  "title": "Wikipedia",
+  "totalInteractableElements": 42,
+  "elements": [
+    {
+      "index": 0,
+      "id": "searchInput",
+      "tagName": "INPUT",
+      "text": "",
+      "boundingBox": {
+        "x": 100,
+        "y": 200,
+        "width": 300,
+        "height": 40,
+        "centerX": 250,
+        "centerY": 220
+      },
+      "attributes": {
+        "type": "search",
+        "placeholder": "Search Wikipedia"
+      }
+    }
+  ]
+}
+```
+
+这种格式非常适合AI智能体理解和操作网页，可以直接用于：
+- 自动化测试和网页爬虫
+- AI驱动的网页交互
+- 页面结构分析和可访问性检查
+
 ## 开发
 
 您可以在 `src/index.ts` 中开始编写您的库代码。每当您做出更改时，请记得运行构建和测试命令以确保一切正常。
