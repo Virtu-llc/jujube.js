@@ -1,0 +1,12 @@
+# Dependencies
+/node_modules
+
+# Build artifacts
+/dist
+
+# Playwright
+/playwright-report/
+/test-results/
+
+# macOS
+.DS_Store

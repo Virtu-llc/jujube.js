@@ -1,0 +1,27 @@
+{
+  "name": "jujube",
+  "version": "1.0.0",
+  "description": "A JS library distills messy HTML into clean, agent-friendly page structures, giving your AI agents a stable surface to perceive and control any webpage purely through CDP.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "playwright test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Virtu-llc/jujube.js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Virtu-llc/jujube.js/issues"
+  },
+  "homepage": "https://github.com/Virtu-llc/jujube.js#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^24.10.1",
+    "playwright": "^1.57.0",
+    "typescript": "^5.9.3"
+  }
+}
