@@ -5,50 +5,50 @@ import * as path from 'path';
 const domUtilsContent = fs.readFileSync(path.resolve(__dirname, '../vendor/domUtils.js'), 'utf-8');
 
 test('should extract AI-friendly HTML content from Wikipedia', async ({ page }) => {
-  // 访问 Wikipedia 首页
+  // Navigate to Wikipedia homepage
   await page.goto('https://www.wikipedia.org');
 
-  // 注入 domUtils.js 脚本
+  // Inject domUtils.js script
   await page.evaluate(domUtilsContent);
 
-  // 等待页面加载完成
+  // Wait for page to finish loading
   await page.waitForLoadState('networkidle');
 
-  // 提取所有可交互元素的AI友好信息
+  // Extract AI-friendly information of all interactive elements
   const aiContent = await page.evaluate(async () => {
     // @ts-ignore
     const [elements, _] = await buildTreeFromBody();
 
-    // 筛选出可交互的元素
+    // Filter out interactive elements
     const interactableElements = elements.filter((el: any) => el.interactable);
 
-    // 构建AI友好的数据结构
+    // Build AI-friendly data structure
     const aiData = interactableElements.map((el: any, index: number) => {
       return {
-        // 元素序号（AI可以用这个序号来引用元素）
+        // Element index (AI can use this index to reference elements)
         index: index,
 
-        // 元素的唯一ID
+        // Element's unique ID
         id: el.id || null,
 
-        // 元素的标签名（如 A, BUTTON, INPUT 等）
+        // Element's tag name (e.g., A, BUTTON, INPUT, etc.)
         tagName: el.tagName,
 
-        // 元素的文本内容
+        // Element's text content
         text: el.text || '',
 
-        // 元素的位置和尺寸信息（bounding box）
+        // Element's position and size information (bounding box)
         boundingBox: el.rect ? {
           x: Math.round(el.rect.x),
           y: Math.round(el.rect.y),
           width: Math.round(el.rect.width),
           height: Math.round(el.rect.height),
-          // 中心点坐标（方便AI进行点击）
+          // Center point coordinates (convenient for AI to click)
           centerX: Math.round(el.rect.x + el.rect.width / 2),
           centerY: Math.round(el.rect.y + el.rect.height / 2)
         } : null,
 
-        // 元素的其他属性
+        // Element's other attributes
         attributes: {
           href: el.attributes?.href || null,
           type: el.attributes?.type || null,
@@ -59,10 +59,10 @@ test('should extract AI-friendly HTML content from Wikipedia', async ({ page }) 
           role: el.attributes?.role || null,
         },
 
-        // 元素是否当前可见
+        // Whether element is currently visible
         visible: el.visible !== false,
 
-        // 元素的CSS选择器（方便定位）
+        // Element's CSS selector (convenient for locating)
         selector: el.selector || null,
       };
     });
@@ -80,37 +80,37 @@ test('should extract AI-friendly HTML content from Wikipedia', async ({ page }) 
     };
   });
 
-  // 输出提取的信息到控制台
-  console.log('\n=== AI友好的页面内容 ===');
-  console.log(`页面标题: ${aiContent.title}`);
-  console.log(`页面URL: ${aiContent.url}`);
-  console.log(`视口尺寸: ${aiContent.viewport.width}x${aiContent.viewport.height}`);
-  console.log(`可交互元素总数: ${aiContent.totalInteractableElements}\n`);
+  // Output extracted information to console
+  console.log('\n=== AI-Friendly Page Content ===');
+  console.log(`Page Title: ${aiContent.title}`);
+  console.log(`Page URL: ${aiContent.url}`);
+  console.log(`Viewport Size: ${aiContent.viewport.width}x${aiContent.viewport.height}`);
+  console.log(`Total Interactive Elements: ${aiContent.totalInteractableElements}\n`);
 
-  // 显示前10个元素作为示例
-  console.log('前10个可交互元素:');
+  // Display first 10 elements as examples
+  console.log('First 10 Interactive Elements:');
   aiContent.elements.slice(0, 10).forEach((el: any) => {
     console.log(`\n[${el.index}] ${el.tagName}${el.id ? ` #${el.id}` : ''}`);
-    console.log(`  文本: "${el.text.substring(0, 50)}${el.text.length > 50 ? '...' : ''}"`);
+    console.log(`  Text: "${el.text.substring(0, 50)}${el.text.length > 50 ? '...' : ''}"`);
     if (el.boundingBox) {
-      console.log(`  位置: (${el.boundingBox.x}, ${el.boundingBox.y})`);
-      console.log(`  尺寸: ${el.boundingBox.width}x${el.boundingBox.height}`);
-      console.log(`  中心点: (${el.boundingBox.centerX}, ${el.boundingBox.centerY})`);
+      console.log(`  Position: (${el.boundingBox.x}, ${el.boundingBox.y})`);
+      console.log(`  Size: ${el.boundingBox.width}x${el.boundingBox.height}`);
+      console.log(`  Center: (${el.boundingBox.centerX}, ${el.boundingBox.centerY})`);
     }
     if (el.attributes.href) {
-      console.log(`  链接: ${el.attributes.href}`);
+      console.log(`  Link: ${el.attributes.href}`);
     }
   });
 
-  // 将完整数据保存为 JSON 文件
+  // Save complete data as JSON file
   fs.writeFileSync(
     path.resolve(__dirname, 'ai-friendly-content.json'),
     JSON.stringify(aiContent, null, 2),
     'utf-8'
   );
-  console.log('\n✓ 完整数据已保存到: examples/ai-friendly-content.json');
+  console.log('\n✓ Complete data saved to: examples/ai-friendly-content.json');
 
-  // 绘制边界框并截图（可视化）
+  // Draw bounding boxes and take screenshot (visualization)
   await page.evaluate(async () => {
     // @ts-ignore
     const [elements, _] = await buildTreeFromBody();
@@ -123,14 +123,14 @@ test('should extract AI-friendly HTML content from Wikipedia', async ({ page }) 
     path: 'examples/ai-friendly-screenshot.png',
     fullPage: true
   });
-  console.log('✓ 截图已保存到: examples/ai-friendly-screenshot.png\n');
+  console.log('✓ Screenshot saved to: examples/ai-friendly-screenshot.png\n');
 
-  // 验证提取的数据
+  // Verify extracted data
   expect(aiContent.totalInteractableElements).toBeGreaterThan(0);
   expect(aiContent.elements.length).toBe(aiContent.totalInteractableElements);
 });
 
-// 额外示例：展示如何对特定类型的元素进行筛选
+// Additional example: demonstrates how to filter elements by specific types
 test('should filter and categorize interactive elements', async ({ page }) => {
   await page.goto('https://www.wikipedia.org');
   await page.evaluate(domUtilsContent);
@@ -141,13 +141,13 @@ test('should filter and categorize interactive elements', async ({ page }) => {
     const [elements, _] = await buildTreeFromBody();
     const interactableElements = elements.filter((el: any) => el.interactable);
 
-    // 按类型分类元素
+    // Categorize elements by type
     const categories = {
-      links: [] as any[],      // 链接
-      buttons: [] as any[],    // 按钮
-      inputs: [] as any[],     // 输入框
-      selects: [] as any[],    // 下拉框
-      others: [] as any[],     // 其他可交互元素
+      links: [] as any[],      // Links
+      buttons: [] as any[],    // Buttons
+      inputs: [] as any[],     // Input fields
+      selects: [] as any[],    // Select dropdowns
+      others: [] as any[],     // Other interactive elements
     };
 
     interactableElements.forEach((el: any) => {
@@ -184,28 +184,28 @@ test('should filter and categorize interactive elements', async ({ page }) => {
     return categories;
   });
 
-  console.log('\n=== 按类型分类的可交互元素 ===');
-  console.log(`链接 (A): ${categorizedElements.links.length} 个`);
-  console.log(`按钮 (BUTTON): ${categorizedElements.buttons.length} 个`);
-  console.log(`输入框 (INPUT): ${categorizedElements.inputs.length} 个`);
-  console.log(`下拉框 (SELECT): ${categorizedElements.selects.length} 个`);
-  console.log(`其他: ${categorizedElements.others.length} 个\n`);
+  console.log('\n=== Interactive Elements Categorized by Type ===');
+  console.log(`Links (A): ${categorizedElements.links.length}`);
+  console.log(`Buttons (BUTTON): ${categorizedElements.buttons.length}`);
+  console.log(`Inputs (INPUT): ${categorizedElements.inputs.length}`);
+  console.log(`Selects (SELECT): ${categorizedElements.selects.length}`);
+  console.log(`Others: ${categorizedElements.others.length}\n`);
 
-  // 显示一些链接示例
+  // Display some link examples
   if (categorizedElements.links.length > 0) {
-    console.log('链接示例:');
+    console.log('Link Examples:');
     categorizedElements.links.slice(0, 5).forEach((link: any, i: number) => {
       console.log(`  ${i + 1}. "${link.text.substring(0, 40)}" -> ${link.href}`);
     });
   }
 
-  // 保存分类数据
+  // Save categorized data
   fs.writeFileSync(
     path.resolve(__dirname, 'categorized-elements.json'),
     JSON.stringify(categorizedElements, null, 2),
     'utf-8'
   );
-  console.log('\n✓ 分类数据已保存到: examples/categorized-elements.json\n');
+  console.log('\n✓ Categorized data saved to: examples/categorized-elements.json\n');
 
   expect(categorizedElements.links.length).toBeGreaterThan(0);
 });
