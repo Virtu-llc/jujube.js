@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jujube.js Browser Usage Example</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      border-bottom: 3px solid #4CAF50;
+      padding-bottom: 10px;
+    }
+
+    .demo-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .demo-section h2 {
+      color: #4CAF50;
+      margin-top: 0;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 15px 0;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button.secondary {
+      background: #2196F3;
+    }
+
+    button.secondary:hover {
+      background: #0b7dda;
+    }
+
+    button.danger {
+      background: #f44336;
+    }
+
+    button.danger:hover {
+      background: #da190b;
+    }
+
+    .output {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .interactive-elements {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 15px 0;
+    }
+
+    .interactive-item {
+      background: #e8f5e9;
+      padding: 10px;
+      border-radius: 4px;
+      border: 2px solid #4CAF50;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .interactive-item:hover {
+      background: #c8e6c9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .status {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .status.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    input[type="text"], input[type="email"], textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    select {
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🍒 Jujube.js - AI-Friendly Web Automation</h1>
+
+  <div class="demo-section">
+    <h2>Interactive Demo Page</h2>
+    <p>This page demonstrates how to use Jujube.js to mark, extract, and interact with elements on a webpage.</p>
+
+    <div class="button-group">
+      <button id="btnMarkElements">1. Mark Interactive Elements</button>
+      <button id="btnGetContent" class="secondary">2. Get Page Content</button>
+      <button id="btnGetDescription" class="secondary">3. Get Text Description</button>
+      <button id="btnClearMarks" class="danger">Clear Marks</button>
+    </div>
+
+    <div id="status"></div>
+    <div id="output" class="output" style="display: none;"></div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Sample Interactive Elements</h2>
+    <p>These elements will be detected and marked by Jujube.js:</p>
+
+    <div class="interactive-elements">
+      <div class="interactive-item" onclick="alert('Card 1 clicked!')">
+        <strong>Clickable Card 1</strong>
+        <p>Click me!</p>
+      </div>
+      <div class="interactive-item" onclick="alert('Card 2 clicked!')">
+        <strong>Clickable Card 2</strong>
+        <p>Click me!</p>
+      </div>
+      <div class="interactive-item" onclick="alert('Card 3 clicked!')">
+        <strong>Clickable Card 3</strong>
+        <p>Click me!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Sample Form</h2>
+    <form id="sampleForm" onsubmit="event.preventDefault(); alert('Form submitted!');">
+      <label>
+        Name:
+        <input type="text" name="name" placeholder="Enter your name" required>
+      </label>
+
+      <label>
+        Email:
+        <input type="email" name="email" placeholder="Enter your email" required>
+      </label>
+
+      <label>
+        Country:
+        <select name="country">
+          <option value="">Select a country</option>
+          <option value="us">United States</option>
+          <option value="uk">United Kingdom</option>
+          <option value="ca">Canada</option>
+          <option value="au">Australia</option>
+        </select>
+      </label>
+
+      <label>
+        Message:
+        <textarea name="message" placeholder="Enter your message" rows="4"></textarea>
+      </label>
+
+      <div class="button-group">
+        <button type="submit">Submit Form</button>
+        <button type="reset" class="secondary">Reset Form</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="demo-section">
+    <h2>Navigation Links</h2>
+    <div class="button-group">
+      <a href="#section1"><button>Go to Section 1</button></a>
+      <a href="#section2"><button>Go to Section 2</button></a>
+      <a href="https://github.com" target="_blank"><button class="secondary">GitHub</button></a>
+    </div>
+  </div>
+
+  <!-- Load domUtils.js first -->
+  <script src="../vendor/domUtils.js"></script>
+
+  <!-- Load compiled Jujube library -->
+  <script src="../dist/index.js"></script>
+
+  <!-- Demo script -->
+  <script>
+    // Initialize Jujube
+    let jujubeInstance = null;
+
+    async function initJujube() {
+      if (!jujubeInstance) {
+        jujubeInstance = new window.Jujube();
+        await jujubeInstance.init();
+      }
+      return jujubeInstance;
+    }
+
+    function showStatus(message, type = 'info') {
+      const statusDiv = document.getElementById('status');
+      statusDiv.className = `status ${type}`;
+      statusDiv.textContent = message;
+      statusDiv.style.display = 'block';
+    }
+
+    function showOutput(content) {
+      const outputDiv = document.getElementById('output');
+      outputDiv.textContent = content;
+      outputDiv.style.display = 'block';
+    }
+
+    // Button: Mark Interactive Elements
+    document.getElementById('btnMarkElements').addEventListener('click', async () => {
+      try {
+        showStatus('Marking interactive elements...', 'info');
+        const jujube = await initJujube();
+        const elements = await jujube.markInteractiveElements();
+
+        showStatus(`✓ Successfully marked ${elements.length} interactive elements`, 'success');
+
+        const summary = elements
+          .slice(0, 20)
+          .map(el => `[${el.id}] ${el.tagName}: "${el.text.substring(0, 40)}"`)
+          .join('\n');
+
+        showOutput(`Marked Elements (showing first 20):\n\n${summary}\n\n... and ${Math.max(0, elements.length - 20)} more`);
+      } catch (error) {
+        showStatus(`✗ Error: ${error.message}`, 'error');
+        console.error(error);
+      }
+    });
+
+    // Button: Get Page Content
+    document.getElementById('btnGetContent').addEventListener('click', async () => {
+      try {
+        showStatus('Extracting page content...', 'info');
+        const jujube = await initJujube();
+        const content = await jujube.getPageContent();
+
+        showStatus(`✓ Successfully extracted content from ${content.totalInteractableElements} elements`, 'success');
+
+        const json = JSON.stringify(content, null, 2);
+        showOutput(json);
+
+        // Also log to console for easy copying
+        console.log('Page Content:', content);
+      } catch (error) {
+        showStatus(`✗ Error: ${error.message}`, 'error');
+        console.error(error);
+      }
+    });
+
+    // Button: Get Text Description
+    document.getElementById('btnGetDescription').addEventListener('click', async () => {
+      try {
+        showStatus('Generating text description...', 'info');
+        const jujube = await initJujube();
+        const description = await jujube.getTextDescription();
+
+        showStatus('✓ Successfully generated text description', 'success');
+        showOutput(description);
+
+        console.log('Text Description:', description);
+      } catch (error) {
+        showStatus(`✗ Error: ${error.message}`, 'error');
+        console.error(error);
+      }
+    });
+
+    // Button: Clear Marks
+    document.getElementById('btnClearMarks').addEventListener('click', async () => {
+      try {
+        if (!jujubeInstance) {
+          showStatus('No marks to clear', 'info');
+          return;
+        }
+
+        jujubeInstance.clearMarks();
+        showStatus('✓ Marks cleared', 'success');
+        document.getElementById('output').style.display = 'none';
+      } catch (error) {
+        showStatus(`✗ Error: ${error.message}`, 'error');
+        console.error(error);
+      }
+    });
+
+    // Demo: Click element by ID (accessible from console)
+    window.jujubeClickElement = async function(id) {
+      try {
+        const jujube = await initJujube();
+        await jujube.clickElement(id);
+        console.log(`✓ Clicked element ${id}`);
+      } catch (error) {
+        console.error(`✗ Error clicking element ${id}:`, error);
+      }
+    };
+
+    // Demo: Highlight element by ID (accessible from console)
+    window.jujubeHighlightElement = async function(id, duration = 1000) {
+      try {
+        const jujube = await initJujube();
+        await jujube.highlightElement(id, duration);
+        console.log(`✓ Highlighted element ${id}`);
+      } catch (error) {
+        console.error(`✗ Error highlighting element ${id}:`, error);
+      }
+    };
+
+    console.log('%c🍒 Jujube.js Demo Ready!', 'color: #4CAF50; font-size: 16px; font-weight: bold;');
+    console.log('Try these commands in the console:');
+    console.log('  - jujubeClickElement(5)       // Click element with ID 5');
+    console.log('  - jujubeHighlightElement(3)   // Highlight element with ID 3');
+  </script>
+</body>
+</html>
